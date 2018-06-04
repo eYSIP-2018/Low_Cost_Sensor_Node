@@ -1,4 +1,4 @@
-// the setup function runs once when you press reset or power the board
+
 #define OUT 1
 #define IN  0
 #define LED 13
@@ -18,7 +18,8 @@ void Set_pin(unsigned char , unsigned char);
  *  e.g. Write_Digital(13,high);
  */
 void Write_Digital (unsigned char , unsigned char );
-void UART_Init(uint32_t );
+void UART_Init(uint32_t ); // initilzation of uart
+///////////////////////////
 void UART_Init(uint32_t v_baudRate_u32)
 {
   UCSR0B= (1<<RXEN) | (1<<TXEN);                  // Enable Receiver and Transmitter
@@ -36,6 +37,7 @@ while ( !( UCSR0A & (1<<UDRE0)) )
 /* Put data into buffer, sends the data */
 UDR0 = data;
 }
+/////////////////
 void Set_pin (unsigned char num, unsigned char dir )
 { 
    if (dir == OUT )
@@ -52,6 +54,7 @@ void Set_pin (unsigned char num, unsigned char dir )
           DDRB |= (0<<num);
       }
 }
+/////////////
 void Write_Digital (unsigned char num, unsigned char value)
 {
     if (value  == high )
@@ -68,6 +71,8 @@ void Write_Digital (unsigned char num, unsigned char value)
           PORTB &= ~(1<<num);
     }
 }
+// the setup function runs once when you press reset or power the board
+
 void setup()
 {
   // initialize digital pin 13 as an output.
