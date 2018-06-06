@@ -1,5 +1,4 @@
 \documentclass[10pt, a4paper]{beamer}
-
 \usetheme{Berkeley}
 \usecolortheme{sidebartab}
 
@@ -33,7 +32,7 @@ programming
         		\item A sensor node platform along with sample codes for rapid prototyping
 				\item A firmware for low power modes and nRF24L01 networking
 				\item Documenation on Hardware and Software
-				\item Documentation for Tiny OS 
+			
                 \end{itemize} 
 	\end{itemize}
 \end{frame}
@@ -50,9 +49,9 @@ programming
     \textbf{Task No.} & \multicolumn{1}{|c|}{\textbf{Tasks}} & \textbf{Deadline} \\\hline
     1     & \multicolumn{1}{|p{23.5em}|}{Study about different sensor nodes platform available and their USP.\newline{}Take desirable aspects of each} & 1 day \\\hline
     2     & Review low power modes in Atmega328p, NRF2401 literature review & 1 day \\\hline
-    3     & \multicolumn{1}{|p{23.5em}|}{Build prototype using arduino pro mini + NRF2401, test range\newline{}theoretically and experimentally in outdoor environment} & 2 day \\\hline
-    4     & \multicolumn{1}{|p{23.5em}|}{Research components available and select to fit price vs performance\newline{}metric} & 2 days \\\hline
-    5     & \multicolumn{1}{|p{23.5em}|}{Build pcb design, source components, evaluation in proteus (if\newline{}necessary)} & 5 days \\\hline
+    3     & \multicolumn{1}{|p{23.5em}|}{Build prototype using arduino pro mini + NRF2401, test range theoretically and experimentally in outdoor \newline environment} & 2 day \\\hline
+    4     & \multicolumn{1}{|p{23.5em}|}{Research components available and select to fit price vs performance  metric} & 2 days \\\hline
+    5     & \multicolumn{1}{|p{23.5em}|}{Build pcb design, source components, evaluation \newline in proteus  (if  necessary)} & 5 days \\\hline
     6     & \multicolumn{1}{|p{23.5em}|}{Prototype soldering and testing} & 2 days \\\hline
     7     & \multicolumn{1}{|p{23.5em}|}{Building a network of 3 nodes, relaying info, power consumption\newline{}analysis} & 5 days \\\hline
     8     & \multicolumn{1}{|p{23.5em}|}{Making reusable firmware for NRF2401, interfacing soil moisture,\newline{}temperature/humidity sensors} & 4-5 days \\\hline
@@ -73,7 +72,7 @@ programming
 \section{Task Accomplished}
 \begin{frame}{Task Accomplished}
 	\begin{itemize}
-		\item  Study of Atmega328p data sheet
+		\item  Study of Atmega328p datasheet
          \item Wireless module
     	  \begin{itemize}
     	     \item XBee (250 Kbps, 1.2 km, Rs. 1158)
@@ -82,7 +81,7 @@ programming
         
          \end{itemize}
         \item Study of RF24 library with useful APIs
-        \item Successfully uploaded boot loader on Arduino Pro Mini
+        \item Successfully uploaded bootloader on Arduino Pro Mini
         \item Selected components for circuit design
         \begin{itemize}
         \item LDO (MIC5219)
@@ -102,7 +101,7 @@ programming
 \end{itemize}
 \begin{center}
 \includegraphics[width=0.5\textwidth]{IMG_20180605_144752.jpg}
-\caption{1. Prototype Hard}
+\caption{1. Prototype Hardware}
 \end{center}
 \end{figure}
 
@@ -201,10 +200,14 @@ programming
 \section{Future Plans}
 \begin{frame}{Future Plans}
 	\begin{itemize}
-		\item PCB printing, soldering and testing.
-        \item Solve the problem of RF24 library in Atmel. So, that we can make example codes for prototype.
+		\item PCB printing, soldering and testing
+        \item Solve the problem of RF24 library in Atmel. So, that we can make example codes for prototype
         \item Duty cycling of Atmega328p
-        \item Study about RF24mesh library.
+        \item Study about RF24mesh library
+        \item Setup of 5 nodes WSN star network
+        \item Use Raspberry-pi as gateway connected to master
+        \item Operating life prediction of WSN
+        \item Add soil moisture,light intensity sensor,humidity sensor on board as examples sensors
 	\end{itemize}
 \end{frame}
 
