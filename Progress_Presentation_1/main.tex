@@ -1,0 +1,216 @@
+\documentclass[10pt, a4paper]{beamer}
+
+\usetheme{Berkeley}
+\usecolortheme{sidebartab}
+
+\begin{document}
+	\setbeamertemplate{sidebar left}{}
+	\title{Progress Presentation-I}
+	\subtitle{e-Yantra Summer Internship-2018 \\ $Low Cost Sensor Node / Sensor Network Development Platform$}
+	\author{Sachin Jadhav\\Nithin Thilakappan\\Nishit Patel\\
+	Mentors:\\ Parin Chheda\\Kalind Karia}
+	\institute{IIT Bombay}
+	\date{\today}
+	%\addtobeamertemplate{sidebar left}{}{\includegraphics[scale = 0.3]{logowithtext.png}}
+	\frame{\titlepage}
+
+\setbeamertemplate{sidebar left}[sidebar theme]
+\section{Overview of Project}
+\begin{frame}{Overview of Project}
+	\begin{itemize}
+		\item Project Name :- Low Cost Sensor Node / Sensor Network Development Platform 
+		\item Objective
+        	\begin{itemize}
+        		\item A custom built power supply for optimized for low power sensor node applications
+				\item Ability to program via Arduino IDE/ Atmel Studio
+				\item Use NRF2401 for RF communication
+				\item Completely open source design and sample codes to make it useful for WSNs
+				\item Can be used as general purpose microcontroller board for learning interfacing and C
+programming
+                \end{itemize}
+		\item Deliverables
+        \begin{itemize}
+        		\item A sensor node platform along with sample codes for rapid prototyping
+				\item A firmware for low power modes and nRF24L01 networking
+				\item Documenation on Hardware and Software
+				\item Documentation for Tiny OS 
+                \end{itemize} 
+	\end{itemize}
+\end{frame}
+
+\section{Overview of Task}
+\begin{frame}{Overview of Task}
+
+\begin{table}[htbp]
+ \tiny
+  \centering
+  
+    \begin{tabular}{|c|l|c|}
+    \hline
+    \textbf{Task No.} & \multicolumn{1}{|c|}{\textbf{Tasks}} & \textbf{Deadline} \\\hline
+    1     & \multicolumn{1}{|p{23.5em}|}{Study about different sensor nodes platform available and their USP.\newline{}Take desirable aspects of each} & 1 day \\\hline
+    2     & Review low power modes in Atmega328p, NRF2401 literature review & 1 day \\\hline
+    3     & \multicolumn{1}{|p{23.5em}|}{Build prototype using arduino pro mini + NRF2401, test range\newline{}theoretically and experimentally in outdoor environment} & 2 day \\\hline
+    4     & \multicolumn{1}{|p{23.5em}|}{Research components available and select to fit price vs performance\newline{}metric} & 2 days \\\hline
+    5     & \multicolumn{1}{|p{23.5em}|}{Build pcb design, source components, evaluation in proteus (if\newline{}necessary)} & 5 days \\\hline
+    6     & \multicolumn{1}{|p{23.5em}|}{Prototype soldering and testing} & 2 days \\\hline
+    7     & \multicolumn{1}{|p{23.5em}|}{Building a network of 3 nodes, relaying info, power consumption\newline{}analysis} & 5 days \\\hline
+    8     & \multicolumn{1}{|p{23.5em}|}{Making reusable firmware for NRF2401, interfacing soil moisture,\newline{}temperature/humidity sensors} & 4-5 days \\\hline
+    9     & \multicolumn{1}{|p{23.5em}|}{Loading tiny OS, initial experiments} & 2 days \\\hline
+    10    & \multicolumn{1}{|p{23.5em}|}{Trying out the features available in tiny OS, feasibility check} & 3 days \\\hline
+    11    & Firmware documentation, hardware manual and reporting results & 3 days \\\hline
+    \end{tabular}%
+  \label{tab:addlabel}%
+\end{table}%
+
+	
+
+
+\end{frame}
+
+
+
+\section{Task Accomplished}
+\begin{frame}{Task Accomplished}
+	\begin{itemize}
+		\item  Study of Atmega328p data sheet
+         \item Wireless module
+    	  \begin{itemize}
+    	     \item XBee (250 Kbps, 1.2 km, Rs. 1158)
+     		 \item Bluetooth (1 Mbps, 10 m,Rs. 250)
+     		 \item nRF24L01 (2Mbps, 100 m, Rs. 100 )
+        
+         \end{itemize}
+        \item Study of RF24 library with useful APIs
+        \item Successfully uploaded boot loader on Arduino Pro Mini
+        \item Selected components for circuit design
+        \begin{itemize}
+        \item LDO (MIC5219)
+        \item  Boost converter (FP6291)
+    	\item Mosfet (PMV65XP)
+        
+        \end{itemize}
+        
+ \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Task Accomplished}
+\begin{figure}
+\begin{itemize}
+\item Prototype hardware for range testing
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{IMG_20180605_144752.jpg}
+\caption{1. Prototype Hard}
+\end{center}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Task Accomplished}
+\begin{figure}
+\begin{itemize}
+\item PCB design of final circuit
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.7\textwidth]{Capture.JPG}
+\caption{2. Schematic design of board}
+\end{center}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Task Accomplished}
+	\begin{itemize}
+    \item Completed testing of star network by using two transmitter and one receiver.
+    \item Measure current of Arduino Pro Mini
+    \begin{itemize}
+    	\item Normal mode current = \textbf{11.5 mA} 
+        \item Sleep mode current =\textbf{0.6 mA}
+    \end{itemize}
+    \item Measure current of nRF24L01
+    \begin{itemize}
+    	\item Normal mode current = \textbf{1.2 mA}  
+        \item stand by mode current = \textbf{40 uA}
+        \item Sleep mode current = \textbf{900 nA}
+    \end{itemize}
+    \item Test the range of nRF24L01 in outdoor environment with different data rate.
+    \begin{itemize}
+    	\item  MIN  (-18dBm) power =  \textbf{0 to 6 m}
+        \item  LOW  (-12dBm) power =  \textbf{0 to 8 m}
+        \item  HIGH (-6dBm)  power = \textbf{0 to 12 m}
+        \item  MAX  (0dBm)   power =  \textbf{0 to 16 m}
+	\end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Task Accomplished}
+\begin{figure}
+\begin{center}
+\includegraphics[width=1\textwidth]{pro_mini_current_vtg_2.jpeg}
+\caption{3. Current of Arduino Pro Mini (Sleep mode, Idle mode)}
+\end{center}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Task Accomplished}
+\begin{figure}
+\begin{center}
+
+\includegraphics[width=1\textwidth]{IMG-20180606-WA0003.jpg}
+\caption{4. Current of nRF24L01 (Active mode, Sleep mode)}
+\end{center}
+\end{figure}
+\end{frame}
+
+
+
+\begin{table}[htbp]
+  \centering
+  \caption{Range testing of nRF25L01(At different data rate)}
+    \begin{tabular}{|c|c|c|c|c|}
+    \hline
+    \multicolumn{1}{| p{5.715em} |}{Transmission \newline{}Power level} & \multicolumn{1}{ | p{3.715em} | }{MIN power\newline{}(-18 dBm)} & \multicolumn{1}{| p{4em} |}{LOW power\newline{}(-12 dBm)} & \multicolumn{1}{| p{4.145em} |}{HIGH power \newline{}(-6 dBm)} & \multicolumn{1}{|p{3.855em}|}{MAX power \newline{}(0 dBm)} \\
+    \multicolumn{1}{|l|}{Distance (meter)} &       &       &       &  \\\hline
+          &       &       &       &  \\\hline
+    3.8   & 100\% & 100\% & 100\% & 100\% \\\hline
+    4.9   & 100\% & 100\% & 100\% & 100\% \\\hline
+    5.9   & 100\% & 100\% & 100\% & 100\% \\\hline
+    6.9   & 47\%  & 100\% & 100\% & 100\% \\\hline
+    8     & 0\%   & 100\% & 100\% & 100\% \\\hline
+    8.2   & 0\%   & 100\% & 100\% & 100\% \\\hline
+    10    & 0\%   & 74\%  & 100\% & 100\% \\\hline
+    12.4  & 0\%   & 0\%   & 100\% & 100\% \\\hline
+    15.6  & 0\%   & 0\%   & 86\%  & 100\% \\\hline
+    \end{tabular}%
+  \label{tab:addlabel}%
+\end{table}%
+
+\section{Challenges Faced}
+\begin{frame}{Challenges Faced}
+	\begin{itemize}
+		\item Prototype testing of nRF24L01.
+        \item Range testing of nRF24L01 in outdoor environment.
+        \item Setting of fuse bits (Low, High, Extended) using AVRDude.
+        \item Importing RF24 library in Atmel Studio.
+        \item Differentiating data of two transmitter at one receiver.
+	\end{itemize} 
+\end{frame}
+
+\section{Future Plans}
+\begin{frame}{Future Plans}
+	\begin{itemize}
+		\item PCB printing, soldering and testing.
+        \item Solve the problem of RF24 library in Atmel. So, that we can make example codes for prototype.
+        \item Duty cycling of Atmega328p
+        \item Study about RF24mesh library.
+	\end{itemize}
+\end{frame}
+
+
+\section{Thank You}
+\begin{frame}{Thank You}
+	\centering THANK YOU !!!
+\end{frame}
+\end{document}
