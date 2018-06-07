@@ -1,3 +1,6 @@
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
 #define OUT 1
 #define IN  0
 #define LED 13
@@ -26,7 +29,7 @@ void UART_Init(uint32_t v_baudRate_u32)
   UCSR0B = 0x00;
   UCSR0A = 0x00; 
   UCSR0C|= (1<<UCSZ1) | (1<<UCSZ0)|(1<< USBS0);   // Asynchronous mode 8-bit data and 1-stop bit                                 // Clear the UASRT status register
-  UBRR0L |= 51; // set baud rate 9600 for serial transmission with external crystal oscilator at 8.0 MHz 
+  UBRR0L = 103; // set baud rate 9600 for serial transmission with external crystal oscilator at 8.0 MHz 
   UBRR0H = 0;
   UCSR0B |= (1<<RXEN) | (1<<TXEN);                  // Enable Receiver and Transmitter
 }
@@ -82,7 +85,7 @@ void Set_pin (unsigned char num, unsigned char dir )
 /////////////
 void Write_Digital (unsigned char num, unsigned char value)
 {
-   cli();
+   //cli();
     if (value  == high )
    {  
     if (num >= 8 )
@@ -97,11 +100,11 @@ void Write_Digital (unsigned char num, unsigned char value)
       else 
           PORTD &= ~(1<<num);
     }
-    sei();
+   // sei();
 }
 // Main code
 
-unsigned int cnt=0;
+volatile unsigned int cnt=0;
 unsigned char flg =0;
 int main()
 {
@@ -121,25 +124,26 @@ int main()
   TIMSK0 |= (1 << OCIE0A);
   Set_pin(13, OUT); 
   UART_Init(9600);
-  
   sei();
   
   while (1)
   {
-    if ((cnt==100)&&(flg==0))
+    if ((cnt == 1000)&&(flg==0))
     {
      Write_Digital(13, high);
      cnt=0;
      flg=1;
+     UART_Transmit('A');
     }  
-    if ((cnt==100)&&(flg==1))
+    if ((cnt == 1000)&&(flg==1))
     {
      Write_Digital(13, low);
      cnt=0;
      flg=0;
+      UART_Transmit('B');
     } 
     //UART_Printfln("SACHIN1234");
-    //UART_Transmit('A');
+   
     //UART_Transmit ('\n');
   }
 }
