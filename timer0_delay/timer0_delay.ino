@@ -29,7 +29,7 @@ void UART_Init(uint32_t v_baudRate_u32)
   UCSR0B = 0x00;
   UCSR0A = 0x00; 
   UCSR0C|= (1<<UCSZ1) | (1<<UCSZ0)|(1<< USBS0);   // Asynchronous mode 8-bit data and 1-stop bit                                 // Clear the UASRT status register
-  UBRR0L = 103; // set baud rate 9600 for serial transmission with external crystal oscilator at 8.0 MHz 
+  UBRR0L = 51; // set baud rate 9600 for serial transmission with external crystal oscilator at 8.0 MHz 
   UBRR0H = 0;
   UCSR0B |= (1<<RXEN) | (1<<TXEN);                  // Enable Receiver and Transmitter
 }
