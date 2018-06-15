@@ -4,7 +4,7 @@
 SPIClass SPI;
 void SPIClass::begin()
 {
-   cli();//noInterrupts(); // Protect from a scheduler and prevent transactionBegin
+ //  cli();//noInterrupts(); // Protect from a scheduler and prevent transactionBegin
  
     
     Set_pin(SS, OUT);
@@ -20,7 +20,6 @@ void SPIClass::begin()
     // By doing this AFTER enabling SPI, we avoid accidentally
     // clocking in a single bit since the lines go directly
     // from "input" to SPI control.
-    // http://code.google.com/p/arduino/issues/detail?id=888
     Set_pin(SCK, OUT);
     Set_pin(MOSI, OUT);
   
@@ -29,7 +28,7 @@ void SPIClass::begin()
 void SPIClass::end()
  {
   uint8_t sreg = SREG;
-   cli(); //noInterrupts(); // Protect from a scheduler and prevent transactionBegin
+   //cli(); //noInterrupts(); // Protect from a scheduler and prevent transactionBegin
   // Decrease the reference counter
 }
 

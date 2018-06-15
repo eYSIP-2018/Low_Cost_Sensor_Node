@@ -120,7 +120,7 @@ void Write_Digital (unsigned int num, bool value)
     if (value  == high )
    {  
     if (num >= 8 )
-           PORTB = (1<<(num-8));
+           PORTB |= (1<<(num-8));
     else 
           PORTD |= (1<<num);
    }

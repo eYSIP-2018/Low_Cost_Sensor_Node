@@ -9,11 +9,6 @@ void RF24::csn(bool mode)
 	// If we assume 2Mbs data rate and 16Mhz clock, a
 	// divider of 4 is the minimum we want.
 	// CLK:BUS 8Mhz:2Mhz, 16Mhz:4Mhz, or 20Mhz:5Mhz
-      #if !defined (SOFTSPI)	
-		_SPI.setBitOrder(MSBFIRST);
-		_SPI.setDataMode(SPI_MODE0);
-		_SPI.setClockDivider(SPI_CLOCK_DIV2);
-      #endif
 #if !defined (RF24_LINUX)
 	Write_Digital(csn_pin,mode);
   _delay_us(csDelay);
@@ -26,12 +21,13 @@ void RF24::ce(bool level)
 {
   //Allow for 3-pin use on ATTiny
   if (ce_pin != csn_pin) Write_Digital(ce_pin,level);
+  _delay_us(130);// taken form nrf 24l01+ datasheet
 }
 /****************************************************************************/
   inline void RF24::beginTransaction() {
-    #if defined (RF24_SPI_TRANSACTIONS)
-    _SPI.beginTransaction(SPISettings(RF24_SPI_SPEED, MSBFIRST, SPI_MODE0));
-	#endif
+    
+    _SPI.beginTransaction();
+
     csn(low);
   }
 
@@ -39,9 +35,7 @@ void RF24::ce(bool level)
 
   inline void RF24::endTransaction() {
     csn(high);
-	#if defined (RF24_SPI_TRANSACTIONS)
     _SPI.endTransaction();
-	#endif
   }
 
 /****************************************************************************/
@@ -56,9 +50,6 @@ uint8_t RF24::read_register(uint8_t reg, uint8_t* buf, uint8_t len)
     *buf++ = _SPI.transfer(0xff);
   }
   endTransaction();
-
-
-
   return status;
 }
 
@@ -95,7 +86,7 @@ uint8_t RF24::write_register(uint8_t reg, uint8_t value)
 {
   uint8_t status;
 
-  IF_SERIAL_DEBUG(printf_P(PSTR("write_register(%02x,%02x)\r\n"),reg,value));
+  //IF_SERIAL_DEBUG(printf_P(PSTR("write_register(%02x,%02x)\r\n"),reg,value));
 
   beginTransaction();
   status = _SPI.transfer( W_REGISTER | ( REGISTER_MASK & reg ) );
@@ -235,9 +226,6 @@ bool RF24::begin(void)
   uint8_t setup=0;
 
     if (ce_pin != csn_pin) Set_pin(ce_pin,OUT);  
-    #if ! defined(LITTLEWIRE)
-      if (ce_pin != csn_pin)
-    #endif
         Set_pin(csn_pin,OUT);
     _SPI.begin();
     ce(low);
@@ -269,7 +257,7 @@ bool RF24::begin(void)
     p_variant = true ;
   }
   setup = read_register(RF_SETUP);
-  if( setup == 0b00001110 )     // register default for nRF24L01P
+ if( setup == 0b00001110 )     // register default for nRF24L01P
   {
     p_variant = true ;
   }
@@ -327,9 +315,7 @@ bool RF24::isChipConnected()
 
 void RF24::startListening(void)
 {
- #if !defined (RF24_TINY) && ! defined(LITTLEWIRE)
-  powerUp();
- #endif
+
   write_register(NRF_CONFIG, read_register(NRF_CONFIG) | _BV(PRIM_RX));
   write_register(NRF_STATUS, _BV(RX_DR) | _BV(TX_DS) | _BV(MAX_RT) );
   ce(high);
@@ -784,7 +770,6 @@ void RF24::openReadingPipe(uint8_t child, uint64_t address)
       write_register(pgm_read_byte(&child_pipe[child]), reinterpret_cast<const uint8_t*>(&address), 1);
 
     write_register(pgm_read_byte(&child_payload_size[child]),payload_size);
-
     // Note it would be more efficient to set all of the bits for all open
     // pipes at once.  However, I thought it would make the calling code
     // more simple to do it this way.

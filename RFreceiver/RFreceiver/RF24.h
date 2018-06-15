@@ -998,6 +998,25 @@ s   *
    * @return Current value of status register
    */
   uint8_t flush_rx(void);
+  /**
+   * Read a chunk of data in from a register
+   *
+   * @param reg Which register. Use constants from nRF24L01.h
+   * @param buf Where to put the data
+   * @param len How many bytes of data to transfer
+   * @return Current value of status register
+   */
+  uint8_t read_register(uint8_t reg, uint8_t* buf, uint8_t len);
+
+  /**
+   * Read single byte from a register
+   *
+   * @param reg Which register. Use constants from nRF24L01.h
+   * @return Current value of register @p reg
+   */
+  uint8_t read_register(uint8_t reg);
+
+
 
 private:
 
@@ -1029,25 +1048,7 @@ private:
    * for a much more detailed description of this pin.
    */
   void ce(bool level);
-  /**
-   * Read a chunk of data in from a register
-   *
-   * @param reg Which register. Use constants from nRF24L01.h
-   * @param buf Where to put the data
-   * @param len How many bytes of data to transfer
-   * @return Current value of status register
-   */
-  uint8_t read_register(uint8_t reg, uint8_t* buf, uint8_t len);
-
-  /**
-   * Read single byte from a register
-   *
-   * @param reg Which register. Use constants from nRF24L01.h
-   * @return Current value of register @p reg
-   */
-  uint8_t read_register(uint8_t reg);
-
-  /**
+    /**
    * Write a chunk of data to a register
    *
    * @param reg Which register. Use constants from nRF24L01.h
