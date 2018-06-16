@@ -7,14 +7,13 @@
   #if defined SPI_HAS_TRANSACTION && !defined SPI_UART && !defined SOFTSPI
     #define RF24_SPI_TRANSACTIONS
   #endif
-  const uint32_t RF24_SPI_SPEED = 10000000;  
+  //const uint32_t RF24_SPI_SPEED = 10000000;  
   #include "SPI.h"
   #define _SPI SPI 
   #include <stdint.h>
   #include <stdio.h>
   #include <string.h>
   #define _BV(x) (1<<(x))
-
    typedef uint16_t prog_uint16_t;
    #define PSTR(x) (x)
    #define printf_P printf

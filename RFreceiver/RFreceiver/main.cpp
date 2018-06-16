@@ -6,18 +6,19 @@
  */ 
 #include <avr/io.h>
 #include "RF24.h"
+
 RF24 radio(9, 10); // CE, CSN
-//uint64_t pipes[3] = {0xF0F0F0F0E1LL,0xF0F0F0F0E2LL,0xF0F0F0F0E3LL };
-const byte address[6] = "00001"; //5 Byte address of nrf device	
-unsigned char count=1;
-unsigned char p=0;
+const uint64_t pipes[3] = {0xF0F0F0F0E1LL,0xF0F0F0F0E2LL,0xF0F0F0F0E3LL }; // address for diffrent pipes
+//const byte address[6] = "00001"; //5 Byte address of nrf device	
+unsigned char count=1;// for packet count
+unsigned char p=0;// variable for power level
 int main(void)
 { 
-	unsigned char status1;
+	unsigned char status1;//to read a NRF24L01 particular register using SPI
 	UART_Init(9600);	 
 	radio.begin();	 
 	//radio.openWritingPipe(address);// transmitter address
-	radio.openReadingPipe(0,address);// receiver address must be same as transmitter 
+	radio.openReadingPipe(1,pipes[1]);// receiver address must be same as transmitter 
 	radio.setPALevel(RF24_PA_MAX);// 0dBm power level
 	radio.setDataRate(RF24_250KBPS);
 	//radio.stopListening();//make radio  transmitter
@@ -42,7 +43,7 @@ int main(void)
 			 UART_Printfln(text);
 			 UART_Printf("Packet count:");
 			 UART_Print_Num(count);
-			 UART_Printf("Pipe Number:");
+			 UART_Printf("Pipe NUM:");
 			 UART_Print_Num(pipenum);
 			 count++;
 			 p=radio.getPALevel();
@@ -51,7 +52,7 @@ int main(void)
 		 }//if end
 		// _delay_ms(1000);
 		 // status1 = radio.read_register(FIFO_STATUS);
-		 // UART_Print_Num(status1);
+		 //UART_Print_Num(status1);
 		 
 		 // code for transmitter
 		 //const char text[] = "Hello";
