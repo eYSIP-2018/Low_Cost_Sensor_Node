@@ -11,8 +11,9 @@ void setup()
   }
 
    //setup watchdog timer for 8s 
-  WDTCSR = (24);//chane WDCE and WDE also resets 
-  WDTCSR = (33);//set prescalar for required timeout 
+  WDTCSR = 0x18;//(24);//change WDCE and WDE also resets 
+ // WDTCSR = (33);//set prescalar for required timeout 
+   WDTCSR = 0x06;// set prescer for 1 seconds
   WDTCSR |=(1<<6);//enable interrupt mode
  //Disable ADC
    ADCSRA &= ~(1<<7);//clear ADEN bit 
