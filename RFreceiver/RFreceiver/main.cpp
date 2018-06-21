@@ -14,10 +14,10 @@ const uint64_t pipes[4] = {0xF0F0F0F0E1LL,0xF0F0F0F0E2LL,0xF0F0F0F0E3LL,0xF0F0F0
 unsigned char count=1;// for packet count
 unsigned char p=0;// variable for power level
 volatile unsigned char flg=0;
-char data0[12] = ""; 
-char data1[12] = "";
-char data2[12] = "";
-char data3[12] = "";
+//char data0[12] = ""; 
+//char data1[12] = "";
+//char data2[12] = "";
+//char data3[12] = "";
 int main(void)
 { 
 	/// initilazation setup function in arduino
@@ -35,17 +35,17 @@ int main(void)
 	while (1)
 	{  
 		 unsigned char pipenum=0;//to store number of particular pipe
-		byte text[11] = "";// to store received data 
-		// char text [11]= "" ;// is also tested
-		 sei();//enable global interrupt 
+		byte text[5] = "";// to store received data
+		 sei();//enable global interrupt
 		 while (radio.available(&pipenum))
 		 {	
 			
 			radio.read(text, sizeof(text));
-			text[9] = pipenum+0x30;
+			text[3] = pipenum;
 			UART_Printf("Pipe NUM:");
 			UART_Print_Num(pipenum);
 			UART_Print_Byte(text);
+			
 			//UART_Printf(text);
 		 }//if end
 		 //data[0]=pipenum;

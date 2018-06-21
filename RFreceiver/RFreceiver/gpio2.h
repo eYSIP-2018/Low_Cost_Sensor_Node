@@ -58,5 +58,5 @@ void adc_init();
 unsigned int adc_read(unsigned char );
 void power_down (unsigned int );//for atmega328p
 void UART_Print_Byte(byte*);
-void UART_TransmitB(byte );
+void UART_TransmitByte(byte );
 #endif /* GPIO2_H_ */

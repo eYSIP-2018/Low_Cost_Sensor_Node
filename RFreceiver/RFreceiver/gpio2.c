@@ -108,10 +108,13 @@ void UART_Print_Numchar(unsigned char n)
 /////////
 void UART_Print_Byte (byte* n)
 {
-	 byte i=0;
+	 byte i = 0;
+	 unsigned char ch = 0;
+	
 	 while (!(*(n+i) =='\0'))
-	 {
-		 UART_TransmitByte(*(n+i));
+	 { 
+		ch = (unsigned char) *(n+i);
+		UART_Print_Numchar(ch);
 		 i++;
 	 }
 	 	UART_Transmit('\n');
