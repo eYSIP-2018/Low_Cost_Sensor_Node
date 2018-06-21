@@ -13,6 +13,7 @@ void Write_Digital (unsigned int, bool );
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #define F_CPU 8000000UL   // crystal frequency
 #define __DELAY_BACKWARD_COMPATIBLE__  
@@ -53,4 +54,9 @@ void UART_Print_Num(unsigned int );
 void UART_Print_Numchar(unsigned char );
 void timer0_init (void);
 unsigned int millis(void);
+void adc_init();
+unsigned int adc_read(unsigned char );
+void power_down (unsigned int );//for atmega328p
+void UART_Print_Byte(byte*);
+void UART_TransmitB(byte );
 #endif /* GPIO2_H_ */

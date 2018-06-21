@@ -53,4 +53,7 @@ void UART_Print_Num(unsigned int );
 void UART_Print_Numchar(unsigned char );
 void timer0_init (void);
 unsigned int millis(void);
+void adc_init();
+unsigned int adc_read(unsigned char );
+void power_down (unsigned int );//for atmega328p
 #endif /* GPIO2_H_ */

@@ -8,61 +8,67 @@
 #include "RF24.h"
 
 RF24 radio(9, 10); // CE, CSN
-const uint64_t pipes[3] = {0xF0F0F0F0E1LL,0xF0F0F0F0E2LL,0xF0F0F0F0E3LL }; // address for diffrent pipes
-//const byte address[6] = "00001"; //5 Byte address of nrf device	
+const uint64_t pipes[4] = {0xF0F0F0F0E1LL,0xF0F0F0F0E2LL,0xF0F0F0F0E3LL,0xF0F0F0F0E5LL}; // address for diffrent pipes
+//const byte address[6] = "00001"; //5 Byte address of nrf device
+//const byte addr3 = 3;	
 unsigned char count=1;// for packet count
 unsigned char p=0;// variable for power level
+volatile unsigned char flg=0;
+char data0[12] = ""; 
+char data1[12] = "";
+char data2[12] = "";
+char data3[12] = "";
 int main(void)
 { 
+	/// initilazation setup function in arduino
 	unsigned char status1;//to read a NRF24L01 particular register using SPI
 	UART_Init(9600);	 
-	radio.begin();	 
-	//radio.openWritingPipe(address);// transmitter address
-	radio.openReadingPipe(1,pipes[1]);// receiver address must be same as transmitter 
-	radio.setPALevel(RF24_PA_MAX);// 0dBm power level
+	radio.begin();
 	radio.setDataRate(RF24_250KBPS);
-	//radio.stopListening();//make radio  transmitter
-	radio.startListening();
-		//status1 = radio.read_register(NRF_CONFIG);
-		//UART_Print_Num(status1);
+	radio.setPALevel(RF24_PA_MAX);// 0dBm power level	
+	//radio.openReadingPipe(0,pipes[0]);// receiver address must be same as transmitter
+	radio.openReadingPipe(1,pipes[1]);// receiver address must be same as transmitter
+	radio.openReadingPipe(2,pipes[2]);// receiver address must be same as transmitter 
+	//radio.openReadingPipe(3,pipes[3]);// receiver address must be same as transmitter
+	radio.startListening();// make radio Receiver
+	// char data[] = "";
 	while (1)
 	{  
-		// status1 = radio.read_register(NRF_STATUS);
-		//UART_Print_Num(status1);
-		 unsigned char pipenum = 0;
-		// UART_Printfln("JUST TESt");
-	  // code for receiver		
+		 unsigned char pipenum=0;//to store number of particular pipe
+		byte text[11] = "";// to store received data 
+		// char text [11]= "" ;// is also tested
+		 sei();//enable global interrupt 
+		 while (radio.available(&pipenum))
+		 {	
 			
-		//status1= radio.read_register(RF_SETUP);
-		 //UART_Print_Num(status1);
-		while(radio.available(&pipenum))
-	//	if (radio.available())
-		 {
-			 char text[32] = "";
-			 radio.read(&text, sizeof(text));
-			 UART_Printfln(text);
-			 UART_Printf("Packet count:");
-			 UART_Print_Num(count);
-			 UART_Printf("Pipe NUM:");
-			 UART_Print_Num(pipenum);
-			 count++;
-			 p=radio.getPALevel();
-			 UART_Printf("Power Level:");
-			 UART_Print_Num(p);
+			radio.read(text, sizeof(text));
+			text[9] = pipenum+0x30;
+			UART_Printf("Pipe NUM:");
+			UART_Print_Num(pipenum);
+			UART_Print_Byte(text);
+			//UART_Printf(text);
 		 }//if end
-		// _delay_ms(1000);
-		 // status1 = radio.read_register(FIFO_STATUS);
-		 //UART_Print_Num(status1);
-		 
-		 // code for transmitter
-		 //const char text[] = "Hello";
-		 
-		   //UART_Transmit('\n');
-		/* if(radio.write(&text, sizeof(text))== true)
-		  {
-			  UART_Printfln("sent.");
-		  }
-		_delay_ms(1000);*/
+		 //data[0]=pipenum;
+		 //strcat(data,text);
+		 //UART_Printfln(data);
+		/*while(pipenum)
+		{
+		switch (pipenum)
+		{
+			case 0:
+				memcpy(data0,data,11);
+				break;
+			case 1:
+				memcpy(data0,data,11);
+				break;
+			case 2:
+				memcpy(data0,data,11);
+				break;
+			case 3:
+				memcpy(data0,data,11);
+				break;
+		}
+		}*/
 	}// while 1 loop ends here
 }//main ends here 
 

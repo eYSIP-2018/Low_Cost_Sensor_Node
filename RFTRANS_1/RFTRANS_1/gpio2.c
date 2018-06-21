@@ -161,3 +161,61 @@ unsigned int millis()
 	//timer0_init();
 	return cnt;
 }
+//////////////////////////////////////////////////////////////////////////
+/////////Initilastion of ADC/////
+void adc_init()
+{
+	DDRC = 0x00;//portc output
+	PORTC = 0x00;//floating
+	ADCSRA = 0x83;// adc enable 125KHz adc clock(64 prescaler)
+	ADMUX = 0x00;// selects channel 3
+}
+///////////// ADC READ AND CONVERSION for given channel number ////
+unsigned int adc_read(unsigned char num)
+{
+	unsigned int a;
+	num = num & 0x07;
+	ADMUX |= num;
+	ADCSRA = ADCSRA | 0x40;   //Set start conversion bit
+	while((ADCSRA&0x10)==0);  //Wait for ADC conversion to complete
+	a = ADCL;
+	a |= (ADCH<<8);//higher 2 bit
+	ADCSRA = ADCSRA|0x10; //clear ADIF (ADC Interrupt Flag) by writing 1 to it
+	return a;
+}
+// function for setting ucontroller in sleep mode for given time in minute
+void power_down (unsigned int s_time)
+{
+	for(int i=0;i<20;i++)
+	{
+		Set_pin(i,OUT);
+		
+	}
+	//setup watchdog timer for 8s
+	// comment below line if delay required in seconds
+	// s_time = s_time*8;//as 1 for loop 8 sec sleep factor for 1 minute sleep
+	WDTCSR = (24);//chane WDCE and WDE also resets
+	// WDTCSR = (33);//set prescalar for 8 sec timeout
+	WDTCSR = 0x06; // set prescaler for 1 second timeout
+	WDTCSR |=(1<<6);//enable interrupt mode WDIE set
+	//Disable ADC
+	ADCSRA &= ~(1<<7);//clear ADEN bit dont forget to set this bit while using ADC in main code
+	 DIDR0=0x3F;//disable digital input buffers
+	 DIDR1=0x03;//Disabled  AIN Digital Input Disable it reduces power consumption in digital input buffers
+	// select sleep mode using SMCR.SM[2:0]
+	SMCR |=(1<<2);//power down mode   010
+	SMCR |=1;//enable sleep SMCR.SE set
+	for (int i=0;i<s_time;i++)//gives extended timeout for 8*s_time sec
+	{
+		//BODS Disable
+		// disable Brounout detection (BOD)
+		MCUCR|=(3<<5);
+		MCUCR = (MCUCR &~(1<<5)) | (1<<6);
+		__asm__ __volatile__("sleep");// executes A sleep instruction
+	}
+}
+////   ISR For WATCHDOG TIMER
+ISR(WDT_vect)
+{
+	
+};

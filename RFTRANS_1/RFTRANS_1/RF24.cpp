@@ -108,7 +108,6 @@ uint8_t RF24::write_payload(const void* buf, uint8_t data_len, const uint8_t wri
   
   //printf("[Writing %u bytes %u blanks]",data_len,blank_len);
   //IF_SERIAL_DEBUG( printf("[Writing %u bytes %u blanks]\n",data_len,blank_len); );
-  
   beginTransaction();
   status = _SPI.transfer( writeType );
   while ( data_len-- ) {
