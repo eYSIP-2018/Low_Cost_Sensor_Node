@@ -69,7 +69,7 @@ programming
          \item Writing SPI library for Atmega328p in Atmel Studio
     	 \item Replacing Arduino core functions with our own GPIO functions for Atmega328p
          \item Testing of nRF24L01 transceiver on new firmware for our WSN 
-     	 \item Implement mesh network using 3 nodes
+     	 \item Implement mesh and star network using 3 nodes
          \item Complete Duty cycling of Atmega328p
  \end{itemize}
 
@@ -126,10 +126,11 @@ programming
 \section{Challenges Faced}
 \begin{frame}{Challenges Faced}
 	\begin{itemize}
-		\item Importing C file in C++
+		\item Importing C file in C++ ATMEL project.
         \item Understanding new concept in embedded C++
         \item Timing issue with SPI library
         \item Transmit and Receive flot value in string 
+        \item Synchronization in Star network with duty cycling on both sides
 	\end{itemize} 
 \end{frame}
 
@@ -142,6 +143,7 @@ programming
         \item Setup of 5 nodes WSN star network
         \item Operating life prediction of WSN
         \item Add soil moisture, light intensity sensor, humidity sensor on board and make provision to connect other sensors if needed
+        \item Improvement in receiver for gateway implementation
 	\end{itemize}
 \end{frame}
 

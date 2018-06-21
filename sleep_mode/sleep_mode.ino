@@ -28,7 +28,8 @@ void loop(){
   delay(4000);
   digitalWrite(LED_PIN,LOW);
   for (int i=0;i<1;i++)//gives extended timeout 16 sec
-  { //BODS Disable
+  { 
+    //BODS Disable
     // disable Brounout detection (BOD)
    MCUCR|=(3<<5);
    MCUCR = (MCUCR &~(1<<5)) | (1<<6);
