@@ -6,13 +6,15 @@
  */ 
 #include <avr/io.h>
 #include "RF24.h"
+void getdata();
 RF24 radio(9, 10); // CE, CSN
 const uint64_t pipes[4] = {0xF0F0F0F0E1LL,0xF0F0F0F0E2LL,0xF0F0F0F0E3LL,0xF0F0F0F0E5LL}; // address for diffrent pipes
 //const byte address[6] = "00001"; //5 Byte address of nrf device	
 //const byte addr3 = 3;
 unsigned char count=1;// for packet count
 unsigned char p=0;// variable for power level
-char data[10] = {"EYRC2017S"};
+//char data[10] = {"EYRC2017S"};
+byte data[4]="";	
 char Ntime[3] = "";
 int main(void)
 { 
@@ -27,6 +29,7 @@ int main(void)
 	{
 	 // code for transmitter
 		// function to read modify data string i.e, read sensors data
+		getdata();
 		while (radio.write(data, sizeof(data)) != true)	{}
 			 sei();//enable global interrupts
 			 radio.powerDown();
@@ -43,6 +46,12 @@ int main(void)
 			//radio.stopListening();//make it transmitter
 	}// while 1 loop ends here
 }//main ends here 
-
+/// function to collect data from sensor user can add data depending on number of sensors
+void getdata()
+{
+	data[0] = 250;//battery voltage
+	data[1] = 25;//temp value from temp sensor
+	data[2] = 76;//humidity value from DHTsensor
+}
 
 
