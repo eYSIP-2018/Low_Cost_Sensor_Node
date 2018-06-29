@@ -40,7 +40,7 @@ void loop(void)
            }  
    }
    //ESP in sleep
-    delay(40000);
+    delay(1000);
   }
 
 }

@@ -1,16 +1,22 @@
+#include <ArduinoJson.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WiFiServer.h>
 #include <WiFiUdp.h>
-//#define bat 0
+
 #define tmp 0
 #define hmd 1
+
 String apiKey = "L22QTULTOGQ1RUQN";     //  Enter your Write API key from ThingSpeak
-const char *ssid =  "sj";     // replace with your wifi ssid and wpa2 key
-const char *pass =  "sachinjadhav";
+
+const char *ssid =  "Nithin_RedmiNote5pro";     // replace with your wifi ssid and wpa2 key
+const char *pass =  "123456789";
 const char* server = "api.thingspeak.com";
+
 WiFiClient client;
+
 //String sen1;
+
 byte data[]="";
 
 HardwareSerial Serial2(2);
@@ -34,7 +40,9 @@ void setup()
 
 
 void loop() 
-{
+{  
+  StaticJsonBuffer<500> jsonBuffer;
+  JsonObject& root = jsonBuffer.createObject();
    byte z=0;
    byte i=0;
     //Serial2.begin(2400,SERIAL_8N1,16,17);// 16 RX 17 Tx
@@ -54,22 +62,31 @@ void loop()
      }
       //Serial.println(sen1);
       if (client.connect(server,80))  
-      {
-         String postStr = apiKey;
-         postStr +="&field1=";
-         postStr +=data[tmp];
-         postStr +="&field2=";
-         postStr +=data[hmd];
-         postStr += "\r\n\r\n";
+      {  
+         String jsonString = "[{\"apiKey\":\"";
+         jsonString += apiKey;
+         jsonString +="\",\"&field1=\":\"";
+         jsonString += 26;
+         jsonString +="\",\"field2=\":\"";
+         jsonString += 30;
+         jsonString +="\"}]";
+//         String postStr = apiKey;
+//         postStr +="&field1=";
+//         postStr +=data[tmp];
+//         postStr +="&field2=";
+//         postStr +=data[hmd];
+//         postStr += "\r\n\r\n";
+           Serial.println(jsonString);
            client.print("POST /update HTTP/1.1\n");
            client.print("Host: api.thingspeak.com\n");
            client.print("Connection: close\n");
            client.print("X-THINGSPEAKAPIKEY: "+apiKey+"\n");
            client.print("Content-Type: application/x-www-form-urlencoded\n");
            client.print("Content-Length: ");
-           client.print(postStr.length());
+           client.print(jsonString.length());
            client.print("\n\n");
-           client.print(postStr); 
+           client.print(jsonString); 
+           
       }
       client.stop();
       delay(15000);
