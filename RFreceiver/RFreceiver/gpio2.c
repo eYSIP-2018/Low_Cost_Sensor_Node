@@ -18,12 +18,20 @@ volatile unsigned int cnt=0;//for timer counter delays and millis
 //void Write_Digital (unsigned char , unsigned char );
 //void UART_Init(uint32_t ); // initilzation of uart
 ///////////////////////////
+
+//default node data
+byte sen1[4]={};//node data 1
+byte sen2[4]={};
+byte sen3[4]={};
+byte sen4[4]={};
+byte flg =1; // flag for node data sent count
 void UART_Init(uint32_t v_baudRate_u32)
 {
   UCSR0B = 0x00;
   UCSR0A = 0x00; 
-  UCSR0C|= (1<<UCSZ1) | (1<<UCSZ0)|(1<< USBS0);   // Asynchronous mode 8-bit data and 1-stop bit                                 // Clear the UASRT status register
-  UBRR0L = 51; // set baud rate 9600(51) ,4800(103),2400(206) for serial transmission with external crystal oscilator at 8.0 MHz 
+  UCSR0C|= (1<<UCSZ1) | (1<<UCSZ0)|(1<< USBS0);   // Asynchronous mode 8-bit data and 1-stop bit 
+  //UBRR0L = 103;// 16 MHZ crystal 9600 bps                                // Clear the UASRT status register
+	UBRR0L = 206; //crystal 8MHZ set baud rate 9600(51) ,4800(103),2400(206) for serial transmission with external crystal oscilator at 8.0 MHz 
   UBRR0H = 0;
   UCSR0B |= (1<<RXEN) | (1<<TXEN);                  // Enable Receiver and Transmitter
 }
@@ -45,9 +53,21 @@ void UART_TransmitByte(byte data )
 	while ( !( UCSR0A & (1<<UDRE0)) );
 	/* Put data into buffer, sends the data */
 	UDR0 = data;
-	while (!(UCSR0A & (1<<TXC0)));
+	while (!(UCSR0A & (1<<TXC0)));//wait till data transmission complete
 }
-//////
+////// to availble one byte
+char UART_Available()
+{
+	return  (!(UCSR0A & (1<<UDRE0)));
+}
+////// to read one byte
+char UART_Read()
+{
+	while (!(UCSR0A & (1<<RXC0))); /* Wait until data exists. */
+	//loop_until_bit_is_set(UCSR0A, RXC0);
+	return UDR0;
+}
+//////////////
 void UART_Printfln(const char *text)
 {
   unsigned char i=0;
@@ -241,3 +261,75 @@ ISR(WDT_vect)
 {
 	
 };
+//// functions for ESP32 data send
+//
+void esp_wakeup()
+{
+	// high low pulse on D3 pin
+	Write_Digital(3,high);
+	_delay_ms(100);
+	Write_Digital(3,low);
+}
+void esp_send()
+{
+	char z=0;
+	byte t1=0;
+	//wakeup esp
+	//esp_wakeup();
+	if(t1!=1)
+	   z = UART_Read();
+	
+	if ((z == 'C')&&(flg<5))
+	{
+		
+		//send packet
+		unsigned char i=0;
+		//delay(1000);
+		if (flg==1)
+		{
+			for (i=0;i<4;i++)
+			{
+				UART_TransmitByte(sen1[i]);
+				//delay(1000);
+			}
+			
+		}//flg 1 end
+		if (flg==2)
+		{
+			for (i=0;i<4;i++)
+			{
+				UART_TransmitByte(sen2[i]);
+				//delay(1000);
+			}
+		}//flg 2 end
+		if (flg==3)
+		{
+			for (i=0;i<4;i++)
+			{
+				UART_TransmitByte(sen3[i]);
+				//delay(1000);
+			}
+		}//flg 3 end
+		if (flg==4)
+		{
+			for (i=0;i<4;i++)
+			{
+				UART_TransmitByte(sen4[i]);
+				//delay(1000);
+			}
+			flg=0;//reset flag to zero
+			t1=1;
+			//	return 1; if function type byte
+		}//flg  4 end
+		flg++;
+	}
+	//only demo with pro mini handshaking
+/*	z = UART_Read();
+	if(z=='D')
+	{
+		_delay_ms(25000);
+		esp_wakeup();//wakeup esp
+		UART_Printf("Wake");
+	}
+*/	
+}

@@ -20,6 +20,7 @@ void Write_Digital (unsigned int, bool );
 /*to remove delay error _delay_us expects a constatnt.*/
 #include <util/delay.h>
 #include <avr/pgmspace.h>
+// to read data from program space memory
 #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
 
 #ifndef GPIO2_H_
@@ -45,8 +46,11 @@ void Write_Digital (unsigned int, bool );
 #define IF_SERIAL_DEBUG(x) ({x;})
 typedef bool boolean;
 typedef uint8_t byte;
-
-void UART_Init(uint32_t);
+extern byte sen1[4];//node data 1
+extern byte sen2[4];
+extern byte sen3[4];
+extern byte sen4[4];
+void UART_Init();
 void UART_Transmit(unsigned char);
 void UART_Printfln(const char *);
 void UART_Printf(const char *);
@@ -59,4 +63,9 @@ unsigned int adc_read(unsigned char );
 void power_down (unsigned int );//for atmega328p
 void UART_Print_Byte(byte*);
 void UART_TransmitByte(byte );
+char UART_Available();
+char UART_Read();
+// function related to esp32
+void esp_wakeup();// to Wake up esp from sleep
+void esp_send();//send data to esp serially
 #endif /* GPIO2_H_ */
