@@ -29,12 +29,16 @@ int main(void)
 	{
 	 // code for transmitter
 		// function to read modify data string i.e, read sensors data
-		getdata();
-		while (radio.write(data, sizeof(data)) != true)	{}
-			 sei();//enable global interrupts
-			 radio.powerDown();
-			 power_down(20);
-			 radio.powerUp();
+		//unsigned char status=0;
+		//status = radio.read_register(NRF_CONFIG);
+		//UART_Print_Num(status);
+	//	getdata();
+		radio.write(data, sizeof(data));
+		_delay_ms(2000);
+			// sei();//enable global interrupts
+			// radio.powerDown();
+			// power_down(20);
+		//	 radio.powerUp();
 		 //radio.openReadingPipe(1,pipes[1]);
 		 //radio.startListening();// make receiver to get local time count from hub
 		 //while(radio.available()!= true){}//wait till data is not received

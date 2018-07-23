@@ -31,9 +31,9 @@ int main(void)
 	radio.setPALevel(RF24_PA_MAX);// 0dBm power level	
 	//radio.openReadingPipe(0,pipes[0]);// receiver address must be same as transmitter
 	radio.openReadingPipe(1,pipes[1]);// receiver address must be same as transmitter
-	radio.openReadingPipe(2,pipes[2]);// receiver address must be same as transmitter 
-	radio.openReadingPipe(3,pipes[3]);// receiver address must be same as transmitter
-	radio.openReadingPipe(4,pipes[4]);// receiver address must be same as transmitter
+	//radio.openReadingPipe(2,pipes[2]);// receiver address must be same as transmitter 
+	//radio.openReadingPipe(3,pipes[3]);// receiver address must be same as transmitter
+	//radio.openReadingPipe(4,pipes[4]);// receiver address must be same as transmitter
 	radio.startListening();// make radio Receiver
 	// char data[] = "";
 	/// the code which runs continuously
@@ -46,18 +46,11 @@ int main(void)
 		 {	
 			radio.read(text, sizeof(text));
 			text[3] = (byte)pipenum;
-			//UART_Printf("Pipe NUM:");
-			//UART_Print_Num(pipenum);
-			//UART_Print_Byte(text);
-			
-			//UART_Printf(text);
-		//if end
-		 //data[0]=pipenum;
-		 //strcat(data,text);
-		 //UART_Printfln(data);
-		//while(pipenum)
-		//{
-		switch (pipenum)
+			UART_Printf("Pipe NUM:");
+			UART_Print_Num(pipenum);
+			UART_Print_Byte(text);
+		 }
+	/*	switch (pipenum)
 		{
 			case 1:
 				memcpy(sen1,text,4);
@@ -99,7 +92,7 @@ int main(void)
 			p1=0;p2=0;p3=0;p4=0;
 			//UART_Printf("END");
 		}
-	//	}
+	//	}*/
 	}// while 1 loop ends here
 }//main ends here 
 

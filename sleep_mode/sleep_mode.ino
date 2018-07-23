@@ -1,19 +1,20 @@
-#define LED_PIN 13
+#include <avr/interrupt.h>
+#define LED_PIN 8
 void setup()
 {
- 
-  pinMode(LED_PIN,OUTPUT);
+ pinMode(LED_PIN,OUTPUT);
+ digitalWrite(LED_PIN,HIGH);
   for(int i=0;i<20;i++)
   {
-    if (i !=13)
+    //if (i !=13)
     pinMode(i,OUTPUT);
    // digitalWrite(i,LOW);
   }
 
    //setup watchdog timer for 8s 
   WDTCSR = 0x18;//(24);//change WDCE and WDE also resets 
- // WDTCSR = (33);//set prescalar for required timeout 
-   WDTCSR = 0x06;// set prescer for 1 seconds
+  WDTCSR = (33);//set prescalar for required timeout 8 sec 
+ //  WDTCSR = 0x06;// set prescer for 1 seconds
   WDTCSR |=(1<<6);//enable interrupt mode
  //Disable ADC
    ADCSRA &= ~(1<<7);//clear ADEN bit 
@@ -23,11 +24,12 @@ void setup()
    SMCR |=(1<<2);//power down mode   010
    SMCR |=1;//enable sleep SMCR.SE set
 }
-void loop(){
-  digitalWrite(LED_PIN,HIGH);
-  delay(4000);
-  digitalWrite(LED_PIN,LOW);
-  for (int i=0;i<1;i++)//gives extended timeout 16 sec
+void loop()
+{
+//  digitalWrite(LED_PIN,LOW);
+//  delay(1000);
+
+  for (int i=0;i<2;i++)//gives extended timeout 16 sec
   { 
     //BODS Disable
     // disable Brounout detection (BOD)
@@ -38,6 +40,7 @@ void loop(){
  
 }
 // ISR for wdt
-ISR(WDT_vect){
-  };
+ISR(WDT_vect)
+{
+};
  
