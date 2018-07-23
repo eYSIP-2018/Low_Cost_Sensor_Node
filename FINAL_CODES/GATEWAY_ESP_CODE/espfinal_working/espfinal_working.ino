@@ -2,9 +2,10 @@
 #include <WiFiClient.h>
 #include <WiFiServer.h>
 #include <WiFiUdp.h>
-//#define bat 0
-#define tmp 0
-#define hmd 1
+// macros for data sequence in received packet
+#define bat 0           // battery level is first byte
+#define tmp 1           // first sensor data is second byte
+//#define hmd 1
 String apiKey = "L22QTULTOGQ1RUQN";     //  Enter your Write API key from ThingSpeak
 const char *ssid =  "sj";     // replace with your wifi ssid and wpa2 key
 const char *pass =  "sachinjadhav";
@@ -12,11 +13,14 @@ const char* server = "api.thingspeak.com";
 WiFiClient client;
 String sen1;
 byte data[7]="";
+// varaibles for storing received field data 
 byte tmp1,tmp2,tmp3,tmp4;
 byte hmd1,hmd2,hmd3,hmd4;
- byte d1=0,d2=0,d3=0,d4=0;///flags for data check
+byte d1=0,d2=0,d3=0,d4=0;///flags for data check
 void http_request();
 HardwareSerial Serial2(2);
+
+// setup code runs only once
 void setup()
 {
   Serial.begin(115200);
@@ -30,21 +34,20 @@ void setup()
             Serial.print(".");
      }
       Serial.println("");
-      Serial.println("WiFi connected");
-       
+      Serial.println("WiFi connected");     
 }
 
-
+// the following code runs continuously
 void loop() 
 {
  
-   byte z=0;
-   byte i=0;
-    //Serial2.begin(2400,SERIAL_8N1,16,17);// 16 RX 17 Tx
-    //for handshaking
-     Serial2.write('C'); 
-     //wait for data available send by arduino 
-     delay(4000);
+   byte z=0;//flag for checking received node data
+   byte i=0;// loop counter variable
+  //for handshaking with ESP32
+   Serial2.write('C'); 
+   //wait for data available on serial pin which is sent by arduino 
+   delay(4000);
+   // check data is available and data of all node is received by checking flags 
     while(Serial2.available()&&((z!=1)|(z!=2)|(z!=3)|(z!=4)))
       {
         //Serial.print("got data");
@@ -56,7 +59,7 @@ void loop()
          }
        Serial.println(z);
      }
-     // update data according to fields
+     // update data variables  according to fields
      if (z==1)
       { tmp1 = data[tmp];
         hmd1 = data[hmd];
@@ -78,35 +81,18 @@ void loop()
         d4=1;
        }
       //Seril.println(sen1);
+      // upload data on thingspeak server using ESP32
         http_request();
-      
-       //ESP in sleep
-   /*    if(d1&&d2&&d3&&d4)
-       {
-         Serial.print("SLE");
-         //just for handshaking
-        //Serial2.write('D');
-        esp_sleep_enable_ext0_wakeup(GPIO_NUM_33,1); //1 = High, 0 = Low
-        esp_deep_sleep_start();
-       }
-     */ 
- // Serial2.write(z);
-//    delay(100);
-//    while(Serial2.available())
-//    {
-//    esp_deep_sleep_start();
-//    Serial.print("insleep");
-//    }
  
 }
-/// post request to send data on Thingspeak (Internet)
+// post request to send data on Thingspeak (Internet)
 void http_request()
 {
      if (client.connect(server,80))  
       {
-         String postStr = apiKey;
-         postStr +="&field1=";
-         postStr +=tmp1;
+         String postStr = apiKey;// adding key of channel key in thingspeak
+         postStr +="&field1=";// address of field1
+         postStr +=tmp1;// value of filed1 which will be plotted on graph
          postStr +="&field2=";
          postStr +=hmd1;
          postStr +="&field3=";
@@ -130,9 +116,10 @@ void http_request()
            client.print("Content-Length: ");
            client.print(postStr.length());
            client.print("\n\n");
-           client.print(postStr); 
+           client.print(postStr); //send this whole request to server with above specified format
       }
       client.stop();
+      // wait for next data transmission
       delay(15000);
 }
 
