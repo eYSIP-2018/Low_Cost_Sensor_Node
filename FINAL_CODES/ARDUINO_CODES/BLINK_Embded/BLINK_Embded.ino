@@ -1,3 +1,4 @@
+// predefined macros for bits in registers
 #define OUT 1
 #define IN  0
 #define LED 13
