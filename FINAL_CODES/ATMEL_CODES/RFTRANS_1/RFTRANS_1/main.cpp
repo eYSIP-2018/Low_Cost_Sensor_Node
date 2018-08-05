@@ -2,60 +2,58 @@
  * RFTRANS_1.cpp
  *
  * Created: 19-06-2018 12:17:20
- * Author : sachin mahadevjadhav
+ * Author : sachin mahadev jadhav
  */ 
 #include <avr/io.h>
 #include "RF24.h"
-void getdata();
-RF24 radio(9, 10); // CE, CSN
-const uint64_t pipes[4] = {0xF0F0F0F0E1LL,0xF0F0F0F0E2LL,0xF0F0F0F0E3LL,0xF0F0F0F0E5LL}; // address for diffrent pipes
-//const byte address[6] = "00001"; //5 Byte address of nrf device	
-//const byte addr3 = 3;
-unsigned char count=1;// for packet count
+//for every diffrent transmitter  just change following macro to its node number
+#define  NODE_NUMBER 1
+// address for diffrent pipes numbers for transmission of data through diffrent pipes
+const uint64_t pipes[5] = {0xF0F0F0F0E1LL,0xF0F0F0F0E2LL,0xF0F0F0F0E3LL,0xF0F0F0F0E4LL,0xF0F0F0F0E5LL}; 	
+unsigned char count=1;//variable for packet count
 unsigned char p=0;// variable for power level
-//char data[10] = {"EYRC2017S"};
 byte data[4]="";	
-char Ntime[3] = "";
+unsigned int test=0;
+RF24 radio(9, 10); // CE, CSN	
 int main(void)
 { 
-	unsigned char status1;//to read a NRF24L01 particular register using SPI
-	UART_Init(9600);	 
+	cli();//disable global interrupt
+	unsigned char status1=0;//to read a NRF24L01 particular register using SPI
+	UART_Init();
+	// Every time turn ON mosfet  before initialsing NRF24L01+
+	mosfet_on();
 	radio.begin();	 
-	radio.openWritingPipe(pipes[1]);// transmitter address for pipe 1
-	radio.setDataRate(RF24_250KBPS);
+	radio.openWritingPipe(pipes[NODE_NUMBER]);// transmitter address for pipe 1
+	radio.setDataRate(RF24_250KBPS);// set 250 kbps speed for transmission
+	// sets ARD(Auto Retransmission Delay) and ARC(Auto Retransmission count)
 	//radio.setRetries(12,15);
-	radio.stopListening();//make radio  transmitter
+	radio.stopListening();//make radio  transmitter	
+	sei();//enable global interrupts
+	
 	while (1)
 	{
-	 // code for transmitter
-		// function to read modify data string i.e, read sensors data
-		//unsigned char status=0;
-		//status = radio.read_register(NRF_CONFIG);
-		//UART_Print_Num(status);
-	//	getdata();
-		radio.write(data, sizeof(data));
-		_delay_ms(2000);
-			// sei();//enable global interrupts
-			// radio.powerDown();
-			// power_down(20);
-		//	 radio.powerUp();
-		 //radio.openReadingPipe(1,pipes[1]);
-		 //radio.startListening();// make receiver to get local time count from hub
-		 //while(radio.available()!= true){}//wait till data is not received
-		 //radio.read(&Ntime, sizeof(Ntime)); 
-		// UART_Printf(Ntime); 
-		 // _delay_ms(500);
-			//power_down(10);
-			//radio.openWritingPipe(pipes[1]);// transmitter address for pipe 1
-			//radio.stopListening();//make it transmitter
-	}// while 1 loop ends here
+		// collect data of all sensors 
+		getdata();
+		// send data with fixed ARD untill ACK is not received
+		while(radio.write(data, sizeof(data))!=true){}
+			 sei();//enable global interrupts
+			 radio.powerDown(); 
+			 // switch off mosfet before sleep
+			 mosfet_off();// write 1 to ON P channel MOsfet(0ff mosfet)
+			 //wait for 10 seconds just for testing insert power down delay here
+			 _delay_ms(10000); 
+			 
+			// power_down(10);// put msu in sleep for given(10) minutes or seconds
+			// turn on supply to NRF after waking up
+			mosfet_on();
+			radio.powerUp();//power up nrf
+			radio.begin(); // initailaztion of NRF 
+			radio.openWritingPipe(pipes[NODE_NUMBER]);// transmitter address for pipe number
+			radio.setDataRate(RF24_250KBPS);// set data rate for transmission as 250kbps
+			//radio.setRetries(12,15);// set diffrent ARD,ARC for each transmitter node
+			radio.stopListening();//make radio  transmitter
+			 
+	}// while 1 ends here	
 }//main ends here 
-/// function to collect data from sensor user can add data depending on number of sensors
-void getdata()
-{
-	data[0] = 250;//battery voltage
-	data[1] = 25;//temp value from temp sensor
-	data[2] = 76;//humidity value from DHTsensor
-}
 
 

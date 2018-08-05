@@ -49,22 +49,37 @@ typedef uint8_t byte;
 extern byte sen1[4];//node data 1
 extern byte sen2[4];
 extern byte sen3[4];
-extern byte sen4[4];
+extern byte sen4[4];// functions Related to general purpose input output
+void Set_pin (unsigned int, unsigned int);
+void Write_Digital (unsigned int, bool );
+void mosfet_on();// turns mosfet on to give supply to NRF and ADC channels
+void mosfet_off();// turns mosfet off to give supply to NRF and ADC channels
+// Functions For UART Communicaton
 void UART_Init();
 void UART_Transmit(unsigned char);
 void UART_Printfln(const char *);
 void UART_Printf(const char *);
 void UART_Print_Num(unsigned int );
 void UART_Print_Numchar(unsigned char );
-void timer0_init (void);
-unsigned int millis(void);
-void adc_init();
-unsigned int adc_read(unsigned char );
-void power_down (unsigned int );//for atmega328p
 void UART_Print_Byte(byte*);
 void UART_TransmitByte(byte );
-char UART_Available();
-char UART_Read();
+// Functions related to timer0 .
+// this is used by millis function  to get runtime execution time in milliseconds
+void timer0_init (void);
+unsigned int millis(void);
+// Functions related to ADC
+// To read a sensor value on a particular channel
+unsigned int adcinit(int);
+void adc_init();
+unsigned int adc_read(unsigned char );
+// API for power down mode for given time
+void power_down (unsigned int );//for atmega328p
+// API for collecting sensors data
+void getdata();
+uint8_t get_batt_voltage();//Returns battery voltage
+uint8_t get_temp(int ch);// returns temperature value in integar
+uint8_t get_soil_moisture();// returns soil moisture content in percentage
+
 // function related to esp32
 void esp_wakeup();// to Wake up esp from sleep
 void esp_send();//send data to esp serially

@@ -1,8 +1,6 @@
-
 #include "RF24.h"
 //#include <stdint-gcc.h>
 /****************************************************************************/
-
 void RF24::csn(bool mode)
 {
 	// Minimum ideal SPI bus speed is 2x data rate
@@ -11,9 +9,8 @@ void RF24::csn(bool mode)
 	// CLK:BUS 8Mhz:2Mhz, 16Mhz:4Mhz, or 20Mhz:5Mhz
 #if !defined (RF24_LINUX)
 	Write_Digital(csn_pin,mode);
-  _delay_us(csDelay);
+  _delay_us(5);
 #endif
-
 }
 
 /****************************************************************************/
@@ -33,7 +30,8 @@ void RF24::ce(bool level)
 
 /****************************************************************************/
 
-  inline void RF24::endTransaction() {
+  inline void RF24::endTransaction() 
+  {
     csn(high);
     _SPI.endTransaction();
   }
@@ -91,7 +89,7 @@ uint8_t RF24::write_register(uint8_t reg, uint8_t value)
   beginTransaction();
   status = _SPI.transfer( W_REGISTER | ( REGISTER_MASK & reg ) );
   _SPI.transfer(value);
-  endTransaction();
+ endTransaction();
 
   return status;
 }
@@ -102,7 +100,6 @@ uint8_t RF24::write_payload(const void* buf, uint8_t data_len, const uint8_t wri
 {
   uint8_t status;
   const uint8_t* current = reinterpret_cast<const uint8_t*>(buf);
-
    data_len = rf24_min(data_len, payload_size);
    uint8_t blank_len = dynamic_payloads_enabled ? 0 : payload_size - data_len;
   
@@ -117,7 +114,6 @@ uint8_t RF24::write_payload(const void* buf, uint8_t data_len, const uint8_t wri
     _SPI.transfer(0);
   }  
   endTransaction();
-
   return status;
 }
 
@@ -236,7 +232,7 @@ bool RF24::begin(void)
   // Enabling 16b CRC is by far the most obvious case if the wrong timing is used - or skipped.
   // Technically we require 4.5ms + 14us as a worst case. We'll just call it 5ms for good measure.
   // WARNING: _delay_ms is based on P-variant whereby non-P *may* require different timing.
-  _delay_ms( 5 ) ;
+  _delay_ms(5) ;
 
   // Reset NRF_CONFIG and enable 16-bit CRC.
   write_register( NRF_CONFIG, 0x0C ) ;
@@ -247,7 +243,7 @@ bool RF24::begin(void)
   setRetries(5,15);
 
   // Reset value is MAX
-  //setPALevel( RF24_PA_MAX ) ;
+  setPALevel( RF24_PA_MAX ) ;
 
   // check for connected module and if this is a p nRF24l01 variant
   //
@@ -345,10 +341,10 @@ void RF24::stopListening(void)
 {  
   ce(low);
 
-  _delay_us(txDelay);
+  _delay_us(310);
   
   if(read_register(FEATURE) & _BV(EN_ACK_PAY)){
-    _delay_us(txDelay); //200
+    _delay_us(310); //200
 	flush_tx();
   }
   //flush_rx();
@@ -374,15 +370,22 @@ void RF24::powerDown(void)
 void RF24::powerUp(void)
 {
    uint8_t cfg = read_register(NRF_CONFIG);
-
+	unsigned char status12=0;
    // if not powered up then power up and wait for the radio to initialize
-   if (!(cfg & _BV(PWR_UP))){
+   status12 = read_register(NRF_CONFIG);
+   UART_Print_Num(status12);
+  if (!(cfg & _BV(PWR_UP)))
+   {
+	   UART_Printf("POWER");
       write_register(NRF_CONFIG, cfg | _BV(PWR_UP));
 
       // For nRF24L01+ to go from power down mode to TX or RX mode it must first pass through stand-by mode.
 	  // There must be a __delay_ms_ms of Tpd2stby (see Table 16.) after the nRF24L01+ leaves power down mode before
 	  // the CEis set high. - Tpd2stby can be up to 5ms per the 1.0 datasheet
-      _delay_ms(5);
+      _delay_ms(30);
+	status12 = read_register(NRF_CONFIG);
+	 UART_Print_Num(status12);
+	 UART_Printf("P");	
    }
 }
 
@@ -412,7 +415,7 @@ bool RF24::write( const void* buf, uint8_t len, const bool multicast )
 		uint32_t timer = millis();
 	#endif 
 	
-	while( ! ( get_status()  & ( _BV(TX_DS) | _BV(MAX_RT) ))) { 
+/*	while( ! ( get_status()  & ( _BV(TX_DS) | _BV(MAX_RT) ))) { 
 		#if defined (FAILURE_HANDLING) || defined (RF24_LINUX)
 			if(millis() - timer > 95){			
 				errNotify();
@@ -424,13 +427,14 @@ bool RF24::write( const void* buf, uint8_t len, const bool multicast )
 			}
 		#endif
 	}
-    
+  */ 
 	ce(low);
 
 	uint8_t status = write_register(NRF_STATUS,_BV(RX_DR) | _BV(TX_DS) | _BV(MAX_RT) );
 
   //Max retries exceeded
-  if( status & _BV(MAX_RT)){
+  if( status & _BV(MAX_RT))
+  {
   	flush_tx(); //Only going to be 1 packet int the FIFO at a time using this method, so just flush
   	return 0;
   }

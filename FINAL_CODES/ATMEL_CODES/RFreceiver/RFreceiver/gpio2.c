@@ -17,15 +17,13 @@ volatile unsigned int cnt=0;//for timer counter delays and millis
  */
 //void Write_Digital (unsigned char , unsigned char );
 //void UART_Init(uint32_t ); // initilzation of uart
-///////////////////////////
-
 //default node data
-byte sen1[4]={};//node data 1
-byte sen2[4]={};
-byte sen3[4]={};
-byte sen4[4]={};
+byte sen1[4]={0,25,36,1};//node data 1
+byte sen2[4]={0,25,32,2};
+byte sen3[4]={0,85,65,3};
+byte sen4[4]={0,45,35,4};
 byte flg =1; // flag for node data sent count
-void UART_Init(uint32_t v_baudRate_u32)
+void UART_Init()
 {
   UCSR0B = 0x00;
   UCSR0A = 0x00; 
@@ -58,7 +56,7 @@ void UART_TransmitByte(byte data )
 ////// to availble one byte
 char UART_Available()
 {
-	return  (!(UCSR0A & (1<<UDRE0)));
+	return  ((UCSR0A & (1<<UDRE0)));
 }
 ////// to read one byte
 char UART_Read()
@@ -210,7 +208,7 @@ void adc_init()
 	DDRC = 0x00;//portc output
 	PORTC = 0x00;//floating
 	ADCSRA = 0x83;// adc enable 125KHz adc clock(64 prescaler)
-	ADMUX = 0x00;// selects channel 3
+	ADMUX = 0x40;// selects channel 3
 }
 ///////////// ADC READ AND CONVERSION for given channel number ////
 unsigned int adc_read(unsigned char num)
@@ -228,15 +226,15 @@ unsigned int adc_read(unsigned char num)
 // function for setting ucontroller in sleep mode for given time in minute
 void power_down (unsigned int s_time)
 {
-	for(int i=0;i<20;i++)
-	{
-		Set_pin(i,OUT);
-		
-	}
+	//for(int i=0;i<20;i++)
+	//{
+		//Set_pin(i,OUT);
+		//
+	//}
 	//setup watchdog timer for 8s
 	// comment below line if delay required in seconds
 	// s_time = s_time*8;//as 1 for loop 8 sec sleep factor for 1 minute sleep
-	WDTCSR = (24);//chane WDCE and WDE also resets
+	WDTCSR = (24);//change WDCE and WDE also resets
 	// WDTCSR = (33);//set prescalar for 8 sec timeout
 	WDTCSR = 0x06; // set prescaler for 1 second timeout
 	WDTCSR |=(1<<6);//enable interrupt mode WDIE set
@@ -261,28 +259,57 @@ ISR(WDT_vect)
 {
 	
 };
+
+/// function to collect data from sensor user can add data depending on number of sensors
+
+unsigned int adcinit(int channel)
+{
+	unsigned int result=0;
+	float moisture=0;
+	ADMUX = ADMUX & 0x00;// AND masking to selct a particular channel
+	ADMUX = _BV(REFS0); // Select ADC refrence voltage as AVCC
+	ADMUX = ADMUX | channel; // Selects ADC input channel number on which signal is connected
+	_delay_ms(2); // Wait for Vref to settle
+	ADCSRA |= _BV(ADSC) + _BV(ADEN); // Convert
+	while (bit_is_set(ADCSRA,ADSC)); // wait till conversion Complete
+	result = ADCL;// Read ADC result lower bytes
+	result |= ADCH<<8;// Read ADC result higher bytes
+	return result; // return unsigned int 16 bit ADC Conversion value
+}
+// turn on mosfet which is connected on D8 pin
+void mosfet_on()
+{
+	DDRB |= 0x01;//mosfet D8 pin output
+	PORTB |= 0x00;// write 0 to D8 pin to turn ON P channel MOSFET
+}
+////////////////
+// turn off mosfet which is connected on D8 pin
+void mosfet_off()
+{
+	PORTB |= 0x01;// write 1 to D8 pin turn OFF P channel MOSFET
+}
+
 //// functions for ESP32 data send
 //
 void esp_wakeup()
 {
 	// high low pulse on D3 pin
-	Write_Digital(3,high);
-	_delay_ms(100);
-	Write_Digital(3,low);
+	//Write_Digital(3,high);
+	//_delay_ms(100);
+	//Write_Digital(3,low);
 }
 void esp_send()
 {
-	char z=0;
+	char z=0; // to store received character for handshaking
 	byte t1=0;
 	//wakeup esp
 	//esp_wakeup();
-	if(t1!=1)
-	   z = UART_Read();
-	
+	/*if(t1!=1)*/
+	 z = UART_Read();
 	if ((z == 'C')&&(flg<5))
 	{
-		
 		//send packet
+		// flg is used to maintain data sent count of nodes
 		unsigned char i=0;
 		//delay(1000);
 		if (flg==1)
@@ -323,13 +350,5 @@ void esp_send()
 		}//flg  4 end
 		flg++;
 	}
-	//only demo with pro mini handshaking
-/*	z = UART_Read();
-	if(z=='D')
-	{
-		_delay_ms(25000);
-		esp_wakeup();//wakeup esp
-		UART_Printf("Wake");
-	}
-*/	
+
 }

@@ -3,10 +3,7 @@
 
 SPIClass SPI;
 void SPIClass::begin()
-{
- //  cli();//noInterrupts(); // Protect from a scheduler and prevent transactionBegin
- 
-    
+{ 
     Set_pin(SS, OUT);
 
     // Warning: if the SS pin ever becomes a LOW INPUT then SPI
@@ -28,7 +25,5 @@ void SPIClass::begin()
 void SPIClass::end()
  {
   uint8_t sreg = SREG;
-   //cli(); //noInterrupts(); // Protect from a scheduler and prevent transactionBegin
-  // Decrease the reference counter
 }
 

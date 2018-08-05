@@ -7,7 +7,6 @@ extern "C"
 	#include "gpio2.h"
 };
 // SPI_HAS_TRANSACTION means SPI has beginTransaction(), endTransaction(), 
-// usingInterrupt(), and SPISetting(clock, bitOrder, dataMode)
 #define SPI_HAS_TRANSACTION 1
 class SPIClass {
 public:
